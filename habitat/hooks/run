@@ -1,17 +1,4 @@
 #!/bin/sh
 
-export HOME={{ pkg.svc_data_path }}
-cd $HOME
-
-if [ "$(whoami)" = "root" ]; then
-  exec chpst \
-    -U hab:hab \
-    -u hab:hab \
-    hugo serve -s {{ pkg.path }}/app \
-      --bind {{ cfg.server.bind_address }} \
-      -p {{ cfg.server.port }} 2>&1
-else
-  exec hugo serve -s {{ pkg.path }}/app \
-    --bind {{ cfg.server.bind_address }} \
-    -p {{ cfg.server.port }} 2>&1
-fi
+# Start the Nginx server, passing it our bundled configuration file.
+exec {{ pkgPathFor "core/nginx" }}/bin/nginx -c "{{ pkg.svc_config_path }}/nginx.conf" 2>&1
